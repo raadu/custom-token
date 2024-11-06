@@ -1,0 +1,11 @@
+{
+  "name": "custom-token",
+  "version": "1.0.0",
+  "description": "Custom token for Polygon Network",
+  "main": "index.js",
+  "author": "Raadu",
+  "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.1.0"
+  }
+}
