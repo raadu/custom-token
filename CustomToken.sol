@@ -26,5 +26,32 @@ contract CustomToken is ERC20, AccessControl {
         require(hasRole(MINTER_ROLE, msg.sender), "ACCESS DENIED: Caller is not a minter");
         _mint(to, amount * 10**decimals());
     }
+
+    function mintTokensToContract(uint256 amount) external payable {
+        // Mint tokens to the contract adress. 
+        // Needed to burn token from contract address later during transfers.
+        require(hasRole(MINTER_ROLE, msg.sender), "ACCESS DENIED: Caller is not a minter");
+        _mint(address(this), amount * 10**decimals());
+    }
+
+    function transfer(address recipient, uint256 amount) public override returns (bool) {
+        // Burn 1% of the transfer amount from the contract address.
+        uint256 burnAmount = amount / 100; // 1% burn
+        uint256 transferAmount = amount * 10**decimals();
+
+        // Ensure reserve has enough tokens for burning
+        require(balanceOf(address(this)) >= burnAmount, "Reserve has insufficient tokens to burn");
+
+        // Burn from the reserve
+        _burn(address(this), burnAmount);
+
+        // Transfer the full amount to the recipient
+        return super.transfer(recipient, transferAmount);
+    }
+
+    function getContractBalance() public view returns (uint256) {
+        // Get balance of the current contract
+        return balanceOf(address(this));
+    }
 }
 
