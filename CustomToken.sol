@@ -37,13 +37,21 @@ contract CustomToken is ERC20, AccessControl {
     function transfer(address recipient, uint256 amount) public override returns (bool) {
         // Burn 1% of the transfer amount from the contract address.
         uint256 burnAmount = amount / 100; // 1% burn
+        uint256 buybackAmount = amount / 100; // 1% buyback
         uint256 transferAmount = amount * 10**decimals();
+        uint256 totalBurnOrBuyback = burnAmount + buybackAmount;
+
+        // Address where buyback tokens will be sent
+        // address buybackWallet = 0xYourBuybackWalletAddress; // Replace with actual buyback wallet address
 
         // Ensure reserve has enough tokens for burning
-        require(balanceOf(address(this)) >= burnAmount, "Reserve has insufficient tokens to burn");
+        require(balanceOf(address(this)) >= totalBurnOrBuyback, "Reserve has insufficient tokens to burn");
 
         // Burn from the reserve
         _burn(address(this), burnAmount);
+
+        // Transfer buyback amount to the buyback wallet
+        // super.transfer(buybackWallet, buybackAmount);
 
         // Transfer the full amount to the recipient
         return super.transfer(recipient, transferAmount);
