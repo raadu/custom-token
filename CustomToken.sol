@@ -24,6 +24,8 @@ contract CustomToken is ERC20, AccessControl {
 
     function mint(address to, uint256 amount) external payable {
         require(hasRole(MINTER_ROLE, msg.sender), "ACCESS DENIED: Caller is not a minter");
+        require(to != address(0), "Cannot reward to zero address");
+        require(amount > 0, "Reward amount must be greater than zero");
         _mint(to, amount * 10**decimals());
     }
 
